@@ -1,130 +1,172 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'dart:ui';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:myapp/utils.dart';
+import 'package:intl/intl.dart';
+import 'package:myapp/model/match.dart';
 
-class Scene extends StatelessWidget {
+class CreateMatchPage extends StatefulWidget {
+  @override
+  _CreateMatchPageState createState() => _CreateMatchPageState();
+}
+
+class _CreateMatchPageState extends State<CreateMatchPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  String _sport = '';
+  String _place = '';
+  DateTime _dateTime = DateTime.now();
+  String _positions = '';
+
+  void _createMatch() {
+    // Implement your logic to create a match with the provided information.
+    print('Creating match...');
+    print('Sport: $_sport');
+    print('Place: $_place');
+    print('Date and Time: $_dateTime');
+    print('Positions: $_positions');
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _dateTime,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != _dateTime) {
+      setState(() {
+        _dateTime = picked;
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_dateTime),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _dateTime = DateTime(
+          _dateTime.year,
+          _dateTime.month,
+          _dateTime.day,
+          picked.hour,
+          picked.minute,
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    double baseWidth = 390;
-    double fem = MediaQuery.of(context).size.width / baseWidth;
-    double ffem = fem * 0.97;
-    return Container(
-      width: double.infinity,
-      child: Container(
-        // iphone1410kum (26:44)
-        padding: EdgeInsets.fromLTRB(5 * fem, 5 * fem, 5 * fem, 76 * fem),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Color(0xffffffff),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              // autogroup7bepFbd (Jy1geutzkPjBh4vd5g7beP)
-              margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 44 * fem, 25 * fem),
-              width: double.infinity,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Criar Partida'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Esporte'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor escolha um esporte';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _sport = value!;
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Local'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor escolha um local';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _place = value!;
+                },
+              ),
+              SizedBox(height: 20),
+              Row(
                 children: [
-                  Container(
-                    // autogroupshhrATh (Jy1goue1PxAumf1rnSShhR)
-                    margin: EdgeInsets.fromLTRB(
-                        0 * fem, 0 * fem, 17 * fem, 0 * fem),
-                    width: 30 * fem,
-                    height: 30 * fem,
-                    child: Image.asset(
-                      'assets/login/images/auto-group-shhr.png',
-                      width: 30 * fem,
-                      height: 30 * fem,
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
+                      decoration: InputDecoration(labelText: 'Data'),
+                      validator: (value) {
+                        if (_dateTime == null) {
+                          return 'Por favor selecione uma data';
+                        }
+                        return null;
+                      },
+                      controller: TextEditingController(
+                        text: DateFormat('dd-MM-yyyy').format(_dateTime),
+                      ),
                     ),
                   ),
-                  Container(
-                    // autogroupldqySg7 (Jy1gv9xbgNK7Gcuq2FLdqy)
-                    margin: EdgeInsets.fromLTRB(
-                        0 * fem, 15 * fem, 0 * fem, 0 * fem),
-                    width: 289 * fem,
-                    height: 75 * fem,
-                    decoration: BoxDecoration(
-                      color: Color(0xfffcff6c),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Criar partida',
-                        style: SafeGoogleFont(
-                          'Graduate',
-                          fontSize: 30 * ffem,
-                          fontWeight: FontWeight.w400,
-                          height: 1.1375 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      onTap: () => _selectTime(context),
+                      decoration: InputDecoration(labelText: 'Time'),
+                      validator: (value) {
+                        if (_dateTime == null) {
+                          return 'Please select a time';
+                        }
+                        return null;
+                      },
+                      controller: TextEditingController(
+                        text: DateFormat('HH:mm').format(_dateTime),
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-            Input(text: 'Esporte'),
-            Input(
-              text: 'Local',
-            ),
-            Input(
-              text: 'Dia',
-            ),
-            Input(
-              text: 'Horario',
-            ),
-            Input(
-              text: 'Adicionar Posição',
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 305 * fem,
-                height: 82 * fem,
-                child: ElevatedButton(
-                    child: Text(
-                      "Criar",
-                    ),
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom()),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Posições Disponíveis'),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Por favor preencha as posições disponíveis';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _positions = value!;
+                },
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Input extends StatelessWidget {
-  const Input({
-    super.key,
-    required this.text,
-  });
-
-  final String text;
-  @override
-  Widget build(BuildContext context) {
-    double baseWidth = 390;
-
-    double fem = MediaQuery.of(context).size.width / baseWidth;
-    double ffem = fem * 0.97;
-    return SizedBox(
-      width: double.infinity,
-      height: 38 * fem,
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: TextField(
-          style: TextStyle(fontSize: 8 * ffem, color: Colors.black),
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: text,
-            labelText: text,
-            fillColor: Color.fromARGB(255, 216, 216, 216),
-            filled: true,
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    _createMatch();
+                    Navigator.pop(
+                      context,
+                      Match(
+                        sport: _sport,
+                        place: _place,
+                        datetime: _dateTime,
+                        availablePositions: _positions,
+                      ),
+                    );
+                  }
+                },
+                child: Text('Criar Partida'),
+              ),
+            ],
           ),
         ),
       ),
