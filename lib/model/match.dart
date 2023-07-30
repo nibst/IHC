@@ -1,11 +1,13 @@
 import 'package:hive/hive.dart';
 import 'package:myapp/model/user.dart';
+import 'package:tuple/tuple.dart';
+
 part 'match.g.dart';
 
 @HiveType(typeId: 1)
 class Match {
   Match(
-      {this.id,
+      {required this.id,
       this.sport,
       this.place,
       required this.datetime,
@@ -27,5 +29,9 @@ class Match {
   String? availablePositions;
 
   @HiveField(5)
-  List<User>? registeredPlayers;
+  List<Tuple2<User, String>>? registeredPlayers;
+
+  List<Tuple2<User, String>>? getregisteredPlayers() {
+    return registeredPlayers;
+  }
 }

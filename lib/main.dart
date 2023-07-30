@@ -18,20 +18,12 @@ import 'package:myapp/login/create.dart';
 // import 'package:myapp/login/iphone-14-8.dart';
 // import 'package:myapp/login/iphone-14-5.dart';
 import 'package:myapp/model/match.dart';
-import 'package:hive_flutter/adapters.dart';
-
-Box? box;
+import 'package:myapp/model/match_DAO_Hive.dart';
+import 'package:myapp/model/match_DAO.dart';
 
 void main() async {
-  //initialize flutter framework, needed to use Hive functions before runApp
-  //runApp implicitly calls WidgetsFlutterBinding.ensureInitialized();
-  WidgetsFlutterBinding.ensureInitialized();
-  //Adapt types into the database and out of the database
-  Hive.registerAdapter<Match>(MatchAdapter());
-  //dont know
-  await Hive.initFlutter();
-  //essentially a table
-  box = await Hive.openBox('match_box');
+  MatchDAO matchDAO = MatchDAOHiveImpl();
+  await matchDAO.init();
   runApp(MyApp());
 }
 
@@ -43,7 +35,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.lightGreen,
       ),
       home: ManagePage(),
       routes: {

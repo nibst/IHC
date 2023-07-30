@@ -4,16 +4,31 @@ import 'package:myapp/model/match.dart';
 
 class MatchDAOHiveImpl implements MatchDAO {
   late final Box<Match> matchBox;
+  bool _isHiveInit = false;
+
+  static final MatchDAOHiveImpl _instance =
+      MatchDAOHiveImpl._privateConstructor();
+
+  /// Empty private constructor, as we are initialising the async init() in a
+  /// separate call.
+  MatchDAOHiveImpl._privateConstructor();
+
+  factory MatchDAOHiveImpl() {
+    return _instance;
+  }
 
   /// Initialise the Hive DB here...
   @override
   Future<void> init() async {
-    //Adapt types into the database and out of the database
-    Hive.registerAdapter<Match>(MatchAdapter());
-    //dont know
-    await Hive.initFlutter('hiveDb');
-    //essentially a table
-    matchBox = await Hive.openBox('match_box');
+    if (!_isHiveInit) {
+      //Adapt types into the database and out of the database
+      Hive.registerAdapter<Match>(MatchAdapter());
+      //dont know
+      await Hive.initFlutter('hiveDb');
+      //essentially a table
+      matchBox = await Hive.openBox('match_box');
+      _isHiveInit = true;
+    }
   }
 
   @override
@@ -28,7 +43,13 @@ class MatchDAOHiveImpl implements MatchDAO {
   }
 
   Match? deleteMatch(Match match) {
-    return null;
+    final key = matchBox.values.toList().indexOf(match);
+    if (key != -1) {
+      matchBox.deleteAt(key);
+      return match;
+    } else {
+      return null;
+    }
   }
 
   @override

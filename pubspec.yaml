@@ -41,7 +41,7 @@ dependencies:
   hive: any
   hive_flutter: any
   intl: ^0.18.1
-
+  tuple: ^2.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

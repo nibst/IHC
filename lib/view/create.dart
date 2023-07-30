@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/model/match.dart';
+import 'package:myapp/model/match_DAO_Hive.dart';
+import 'package:myapp/model/match_DAO.dart';
 
 class CreateMatchPage extends StatefulWidget {
   @override
@@ -16,12 +18,16 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
   String _positions = '';
 
   void _createMatch() {
-    // Implement your logic to create a match with the provided information.
-    print('Creating match...');
-    print('Sport: $_sport');
-    print('Place: $_place');
-    print('Date and Time: $_dateTime');
-    print('Positions: $_positions');
+    Navigator.pop(
+      context,
+      Match(
+        id: DateTime.now().millisecondsSinceEpoch,
+        sport: _sport,
+        place: _place,
+        datetime: _dateTime,
+        availablePositions: _positions,
+      ),
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -34,7 +40,13 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
 
     if (picked != null && picked != _dateTime) {
       setState(() {
-        _dateTime = picked;
+        _dateTime = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          _dateTime.hour,
+          _dateTime.minute,
+        );
       });
     }
   }
@@ -153,15 +165,6 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     _createMatch();
-                    Navigator.pop(
-                      context,
-                      Match(
-                        sport: _sport,
-                        place: _place,
-                        datetime: _dateTime,
-                        availablePositions: _positions,
-                      ),
-                    );
                   }
                 },
                 child: Text('Criar Partida'),

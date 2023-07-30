@@ -22,7 +22,7 @@ class MatchAdapter extends TypeAdapter<Match> {
       place: fields[2] as String?,
       datetime: fields[3] as DateTime,
       availablePositions: fields[4] as String?,
-      registeredPlayers: (fields[5] as List?)?.cast<User>(),
+      registeredPlayers: (fields[5] as List?)?.cast<Tuple2<User, String>>(),
     );
   }
 
