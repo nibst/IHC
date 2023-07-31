@@ -26,7 +26,7 @@ class UserDAOHiveImpl implements UserDAO {
       //dont know
       await Hive.initFlutter('hiveDb');
       //essentially a table
-      userBox = await Hive.openBox('user_box');
+      userBox = await Hive.openBox('users_box');
       _isHiveInit = true;
     }
   }
