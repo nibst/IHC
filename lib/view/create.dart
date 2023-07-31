@@ -13,7 +13,7 @@ class CreateMatchPage extends StatefulWidget {
 class _CreateMatchPageState extends State<CreateMatchPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _sport = '';
+  String _sport = 'Futebol';
   String _place = '';
   DateTime _dateTime = DateTime.now();
   String _positions = '';
@@ -85,7 +85,17 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TextFormField(
+              DropdownButtonFormField(
+                value: _sport, // Valor padrão: 'Futebol' se _sport for nulo
+                items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro']
+                    .map((sport) =>
+                        DropdownMenuItem(value: sport, child: Text(sport)))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _sport = value!; // Necessário converter value para String?
+                  });
+                },
                 decoration: InputDecoration(labelText: 'Esporte'),
                 validator: (value) {
                   if (value!.isEmpty) {
