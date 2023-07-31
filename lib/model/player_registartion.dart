@@ -6,9 +6,9 @@ part 'player_registartion.g.dart';
 @HiveType(typeId: 3)
 class PlayerRegistration {
   @HiveField(0)
-  final int playerId;
+  int playerId;
   @HiveField(1)
-  final String position;
+  String position;
 
   PlayerRegistration({required this.playerId, required this.position});
 

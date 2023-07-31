@@ -20,20 +20,22 @@ class MatchDetailsPage extends StatefulWidget {
 class _MatchDetailsPageState extends State<MatchDetailsPage> {
   late UserController userController;
   late MatchController matchController;
+  late Match match;
   @override
   void initState() {
     super.initState();
     userController = UserController(userDAO: userDAO);
-    matchController = MatchController(match: widget.match, matchDAO: matchDAO);
+    matchController = MatchController(matchDAO: matchDAO);
+    match = widget.match;
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isCurrentUserAdmin = match.adminId == currentUser.id;
     List<PlayerRegistration> registrations;
     List<PlayerRegistration> playerRegistrationRequests;
-    registrations = matchController.getMatch().getregistrations();
-    playerRegistrationRequests =
-        matchController.getMatch().getRegistrationRequests();
+    registrations = match.getregistrations();
+    playerRegistrationRequests = match.getRegistrationRequests();
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes da Partida'),
@@ -44,17 +46,21 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Esporte: ${matchController.getMatch().sport}',
+              'Esporte: ${match.sport}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text('Local: ${matchController.getMatch().place}'),
+            Text(
+              'Criador da Partida: ${userController.getUserById(match.adminId)?.name ?? ''}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 8),
+            Text('Local: ${match.place}'),
             SizedBox(height: 8),
             Text(
-                'Data: ${DateFormat('dd-MM-yyyy HH:mm').format(matchController.getMatch().datetime)}'),
+                'Data: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}'),
             SizedBox(height: 8),
-            Text(
-                'Posições Disponíveis: ${matchController.getMatch().availablePositions} '),
+            Text('Posições Disponíveis: ${match.availablePositions} '),
             SizedBox(height: 20),
             Text(
               'Jogadores (${registrations.length}):',
@@ -76,37 +82,46 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
               },
             ),
             SizedBox(height: 20),
-            Text(
-              'Solicitações (${playerRegistrationRequests.length}):',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: playerRegistrationRequests.length,
-              itemBuilder: (context, index) {
-                int id = playerRegistrationRequests[index].getPlayerId();
-                User? player = userController.getUserById(id);
-                String position =
-                    playerRegistrationRequests[index].getPosition();
-                return ListTile(
-                    title: Text(player?.name ?? ""),
-                    subtitle: Text(position),
-                    trailing: InkWell(
-                      child: const Icon(
-                        Icons.add,
-                      ),
-                      onTap: () {
-                        setState(() {
-                          matchController.registerPlayer(id, position);
-                          matchController.removeRegistrationRequest(
-                              PlayerRegistration(
-                                  playerId: id, position: position));
-                        });
-                      },
-                    ));
-              },
-            ),
+            if (isCurrentUserAdmin) // Conditionally render the "Solicitações" section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Solicitações (${playerRegistrationRequests.length}):',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: playerRegistrationRequests.length,
+                    itemBuilder: (context, index) {
+                      int id = playerRegistrationRequests[index].getPlayerId();
+                      User? player = userController.getUserById(id);
+                      String position =
+                          playerRegistrationRequests[index].getPosition();
+                      return ListTile(
+                          title: Text(player?.name ?? ""),
+                          subtitle: Text(position),
+                          trailing: InkWell(
+                            child: const Icon(
+                              Icons.add,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                match = matchController.registerPlayer(
+                                    match, id, position);
+                                match =
+                                    matchController.removeRegistrationRequest(
+                                        match,
+                                        PlayerRegistration(
+                                            playerId: id, position: position));
+                              });
+                            },
+                          ));
+                    },
+                  ),
+                ],
+              ),
           ],
         ),
       ),

@@ -4,11 +4,13 @@ import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/controller/controllers.dart';
 import 'package:myapp/model/daos/daos.dart';
 import 'package:myapp/utils.dart';
 import 'package:myapp/model/models.dart';
 import 'package:myapp/model/factories/factories.dart';
 import 'package:myapp/view/match_details.dart';
+import 'package:myapp/main.dart';
 
 class ManagePage extends StatefulWidget {
   @override
@@ -16,22 +18,32 @@ class ManagePage extends StatefulWidget {
 }
 
 class _ManagePageState extends State<ManagePage> {
-  late MatchDAO matchDAO;
   List<Match> matches = [];
-
-  _ManagePageState() {
-    initMatchDAO();
-  }
-  Future<void> initMatchDAO() async {
-    matchDAO = await MatchDAOFactory.getDAO(DBType.hive);
-    setState(() {
-      matches = matchDAO.getAllMatches();
-    });
+  late MatchController matchController;
+  _ManagePageState();
+  @override
+  void initState() {
+    super.initState();
+    matchController = MatchController(matchDAO: matchDAO);
   }
 
   // List to store all the created matches
   @override
   Widget build(BuildContext context) {
+    matchController.registerPlayer(testMatch, currentUser.id, 'any pos');
+    matches = matchController.getAllMatches();
+    List<Match> matchesCreatedByCurrentUser =
+        matches.where((match) => match.adminId == currentUser.id).toList();
+
+    List<Match> matchesThatCurrentUserIsRegistered = matches
+        .where((match) => match.registrations.any(
+            (registration) => registration.getPlayerId() == currentUser.id))
+        .toList();
+
+    // Filter out duplicate matches from matchesThatCurrentUserIsRegistered.
+    matchesThatCurrentUserIsRegistered
+        .removeWhere((match) => matchesCreatedByCurrentUser.contains(match));
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Gerenciar'),
@@ -39,48 +51,79 @@ class _ManagePageState extends State<ManagePage> {
       body: Column(
         children: [
           Builder(builder: (context) {
-            if (matches.isEmpty) {
+            if (matchesCreatedByCurrentUser.isEmpty &&
+                matchesThatCurrentUserIsRegistered.isEmpty) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Center(child: Text("Sem Partidas")),
               );
             } else {
               return Expanded(
-                  child: ListView.builder(
-                itemCount: matches.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text('${matches[index].sport}'),
-                      subtitle: Text(
-                          '${matches[index].place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(matches[index].datetime)}\nPosições: ${matches[index].availablePositions}'),
-                      trailing: InkWell(
-                        child: const Icon(
-                          Icons.remove_circle,
-                          color: Colors.red,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            matchDAO.deleteMatch(matches[index]);
-                            matches = matchDAO.getAllMatches();
-                          });
-                        },
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MatchDetailsPage(
-                                match: matches[index],
+                child: ListView.builder(
+                  itemCount: matchesCreatedByCurrentUser.length +
+                      matchesThatCurrentUserIsRegistered.length,
+                  itemBuilder: (context, index) {
+                    if (index < matchesCreatedByCurrentUser.length) {
+                      // Display matches created by the current user
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                              '${matchesCreatedByCurrentUser[index].sport}'),
+                          subtitle: Text(
+                              '${matchesCreatedByCurrentUser[index].place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(matchesCreatedByCurrentUser[index].datetime)}\nPosições: ${matchesCreatedByCurrentUser[index].availablePositions}'),
+                          trailing: InkWell(
+                            child: const Icon(
+                              Icons.remove_circle,
+                              color: Colors.red,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                matchController.deleteMatch(
+                                    matchesCreatedByCurrentUser[index]);
+                              });
+                            },
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MatchDetailsPage(
+                                  match: matchesCreatedByCurrentUser[index],
+                                ),
                               ),
-                            ));
-                      },
-                    ),
-                  );
-                },
-              ));
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      // Display matches that the current user is registered at
+                      int registeredIndex =
+                          index - matchesCreatedByCurrentUser.length;
+                      Match match =
+                          matchesThatCurrentUserIsRegistered[registeredIndex];
+                      return Card(
+                        child: ListTile(
+                          title: Text('${match.sport}'),
+                          subtitle: Text(
+                              '${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MatchDetailsPage(
+                                  match: match,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  },
+                ),
+              );
             }
-          })
+          }),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -90,8 +133,7 @@ class _ManagePageState extends State<ManagePage> {
             // This code runs when the CreateMatchPage is dismissed and a new match is created
             if (value != null && value is Match) {
               setState(() {
-                matchDAO.addMatch(value);
-                matches = matchDAO.getAllMatches();
+                matchController.addMatch(value);
               });
             }
           });

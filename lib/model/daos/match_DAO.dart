@@ -8,6 +8,7 @@ abstract class MatchDAO {
   List<Match> getAllMatches();
 
   void addMatch(Match match);
+
   Match? deleteMatch(Match match);
 
   void updateMatch(
