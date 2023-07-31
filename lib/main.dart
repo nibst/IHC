@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myapp/login/manage.dart';
+import 'package:myapp/view/manage.dart';
 import 'package:myapp/utils.dart';
 //import 'package:myapp/login/iphone-14-1.dart';
 // import 'package:myapp/login/.dart';
@@ -13,17 +13,23 @@ import 'package:myapp/utils.dart';
 // import 'package:myapp/login/manage.dart';
 // import 'package:myapp/login/iphone-14-6.dart';
 // import 'package:myapp/login/iphone-14-9.dart';
-import 'package:myapp/login/create.dart';
+import 'package:myapp/view/create.dart';
 // import 'package:myapp/login/iphone-14-7.dart';
 // import 'package:myapp/login/iphone-14-8.dart';
 // import 'package:myapp/login/iphone-14-5.dart';
-import 'package:myapp/model/match.dart';
-import 'package:myapp/model/match_DAO_Hive.dart';
-import 'package:myapp/model/match_DAO.dart';
+import 'package:myapp/model/models.dart';
+import 'package:myapp/model/daos/daos.dart';
+import 'package:myapp/model/factories/factories.dart';
+import 'package:myapp/view/match_details.dart';
+import 'package:myapp/view/login.dart';
 
-void main() async {
-  MatchDAO matchDAO = MatchDAOHiveImpl();
-  await matchDAO.init();
+User currentUser = User(id: 1, name: 'nikolas');
+late UserDAO userDAO;
+late MatchDAO matchDAO;
+
+Future<void> main() async {
+  userDAO = await UserDAOFactory.getDAO(DBType.hive);
+  matchDAO = await MatchDAOFactory.getDAO(DBType.hive);
   runApp(MyApp());
 }
 

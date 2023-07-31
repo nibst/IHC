@@ -21,15 +21,17 @@ class MatchAdapter extends TypeAdapter<Match> {
       sport: fields[1] as String?,
       place: fields[2] as String?,
       datetime: fields[3] as DateTime,
+      adminId: fields[7] as int,
       availablePositions: fields[4] as String?,
-      registeredPlayers: (fields[5] as List?)?.cast<Tuple2<User, String>>(),
+      registrations: (fields[5] as List).cast<PlayerRegistration>(),
+      registrationRequests: (fields[6] as List).cast<PlayerRegistration>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Match obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class MatchAdapter extends TypeAdapter<Match> {
       ..writeByte(4)
       ..write(obj.availablePositions)
       ..writeByte(5)
-      ..write(obj.registeredPlayers);
+      ..write(obj.registrations)
+      ..writeByte(6)
+      ..write(obj.registrationRequests)
+      ..writeByte(7)
+      ..write(obj.adminId);
   }
 
   @override

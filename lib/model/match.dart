@@ -1,18 +1,19 @@
 import 'package:hive/hive.dart';
 import 'package:myapp/model/user.dart';
-import 'package:tuple/tuple.dart';
-
+import 'player_registartion.dart';
 part 'match.g.dart';
 
 @HiveType(typeId: 1)
 class Match {
   Match(
       {required this.id,
-      this.sport,
-      this.place,
+      required this.sport,
+      required this.place,
       required this.datetime,
+      required this.adminId,
       this.availablePositions,
-      this.registeredPlayers});
+      this.registrations = const [],
+      this.registrationRequests = const []});
   @HiveField(0)
   int? id;
 
@@ -29,9 +30,31 @@ class Match {
   String? availablePositions;
 
   @HiveField(5)
-  List<Tuple2<User, String>>? registeredPlayers;
+  List<PlayerRegistration> registrations;
 
-  List<Tuple2<User, String>>? getregisteredPlayers() {
-    return registeredPlayers;
+  @HiveField(6)
+  List<PlayerRegistration> registrationRequests;
+
+  @HiveField(7)
+  int adminId;
+
+  List<PlayerRegistration> getregistrations() {
+    return registrations;
+  }
+
+  void addRegistrationRequest(PlayerRegistration request) {
+    registrationRequests.add(request);
+  }
+
+  List<PlayerRegistration> getRegistrationRequests() {
+    return registrationRequests;
+  }
+
+  void setRegistrationRequests(List<PlayerRegistration> requests) {
+    registrationRequests = requests;
+  }
+
+  void registerPlayer(int userId, String position) {
+    registrations.add(PlayerRegistration(playerId: userId, position: position));
   }
 }

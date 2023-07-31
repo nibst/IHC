@@ -1,6 +1,6 @@
-import 'package:myapp/model/match_DAO.dart';
+import 'package:myapp/model/daos/match_DAO.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:myapp/model/match.dart';
+import 'package:myapp/model/models.dart';
 
 class MatchDAOHiveImpl implements MatchDAO {
   late final Box<Match> matchBox;
@@ -23,10 +23,12 @@ class MatchDAOHiveImpl implements MatchDAO {
     if (!_isHiveInit) {
       //Adapt types into the database and out of the database
       Hive.registerAdapter<Match>(MatchAdapter());
+      Hive.registerAdapter<PlayerRegistration>(PlayerRegistrationAdapter());
+
       //dont know
       await Hive.initFlutter('hiveDb');
       //essentially a table
-      matchBox = await Hive.openBox('match_box');
+      matchBox = await Hive.openBox('matchbox');
       _isHiveInit = true;
     }
   }
@@ -38,10 +40,11 @@ class MatchDAOHiveImpl implements MatchDAO {
   }
 
   @override
-  void addMatch(Match user) {
-    matchBox.add(user);
+  void addMatch(Match match) {
+    matchBox.add(match);
   }
 
+  @override
   Match? deleteMatch(Match match) {
     final key = matchBox.values.toList().indexOf(match);
     if (key != -1) {
@@ -56,5 +59,11 @@ class MatchDAOHiveImpl implements MatchDAO {
   Future<void> clear() async {
     await matchBox.clear();
   }
+
+  @override
+  void updateMatch(Match updatedMatch, int matchIndex) {
+    if (matchBox.isNotEmpty) {
+      matchBox.putAt(matchIndex, updatedMatch);
+    }
+  }
 }
-/// TODO: implement other UserDAO interface overrides...

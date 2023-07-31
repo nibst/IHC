@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:myapp/model/match.dart';
-import 'package:myapp/model/match_DAO_Hive.dart';
-import 'package:myapp/model/match_DAO.dart';
+import 'package:myapp/model/models.dart';
+import 'package:myapp/model/daos/match_DAO_hive.dart';
+import 'package:myapp/model/daos/match_DAO.dart';
+import '../main.dart';
 
 class CreateMatchPage extends StatefulWidget {
   @override
@@ -26,6 +27,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
         place: _place,
         datetime: _dateTime,
         availablePositions: _positions,
+        adminId: currentUser.id,
       ),
     );
   }

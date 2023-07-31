@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
-import 'package:myapp/model/match_DAO_Hive.dart';
-import 'package:myapp/model/match_DAO.dart';
+import 'package:myapp/model/daos/daos.dart';
 import 'package:myapp/utils.dart';
-import 'package:myapp/model/match.dart';
+import 'package:myapp/model/models.dart';
+import 'package:myapp/model/factories/factories.dart';
+import 'package:myapp/view/match_details.dart';
 
 class ManagePage extends StatefulWidget {
   @override
@@ -14,15 +16,22 @@ class ManagePage extends StatefulWidget {
 }
 
 class _ManagePageState extends State<ManagePage> {
-  MatchDAO matchDAO = MatchDAOHiveImpl();
+  late MatchDAO matchDAO;
   List<Match> matches = [];
+
+  _ManagePageState() {
+    initMatchDAO();
+  }
+  Future<void> initMatchDAO() async {
+    matchDAO = await MatchDAOFactory.getDAO(DBType.hive);
+    setState(() {
+      matches = matchDAO.getAllMatches();
+    });
+  }
+
   // List to store all the created matches
   @override
   Widget build(BuildContext context) {
-    matchDAO.init();
-    matches = matchDAO.getAllMatches();
-    print(matches);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Gerenciar'),
@@ -53,9 +62,19 @@ class _ManagePageState extends State<ManagePage> {
                         onTap: () {
                           setState(() {
                             matchDAO.deleteMatch(matches[index]);
+                            matches = matchDAO.getAllMatches();
                           });
                         },
                       ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MatchDetailsPage(
+                                match: matches[index],
+                              ),
+                            ));
+                      },
                     ),
                   );
                 },
@@ -72,6 +91,7 @@ class _ManagePageState extends State<ManagePage> {
             if (value != null && value is Match) {
               setState(() {
                 matchDAO.addMatch(value);
+                matches = matchDAO.getAllMatches();
               });
             }
           });
