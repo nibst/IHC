@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:myapp/main.dart';
 import 'package:myapp/model/models.dart';
 
 class MatchResultsPage extends StatelessWidget {
   final String selectedSport;
-  final double maxDistance;
-  final String positions;
+  final double? maxDistance;
+  final String? positions;
 
   MatchResultsPage({
     required this.selectedSport,
@@ -54,15 +55,14 @@ class MatchResultsPage extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _getMatches() async {
-    final box = await Hive.openBox('matches');
-    final matches = <Map<String, dynamic>>[];
-    for (var i = 0; i < box.length; i++) {
-      final match = box.getAt(i) as Map<String, dynamic>;
-      if (match['title'] == selectedSport &&
-          match['distance'] <= maxDistance &&
-          match['positions'].contains(positions)) {
-        matches.add(match);
+  Future<List<Match>> _getMatches() async {
+    final matches = matchDAO.getAllMatches();
+    List<Match> resultedMatches = [];
+    for (var i = 0; i < matches.length; i++) {
+      if (matches[i].sport == selectedSport &&
+          (0 <= (maxDistance ?? 0)) &&
+          (matches[i].availablePositions?.contains(positions!) ?? true)) {
+        resultedMatches.add(matches[i]);
       }
     }
     return matches;

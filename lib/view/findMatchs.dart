@@ -8,9 +8,9 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String selectedSport = 'futebol';
-  double maxDistance = 0;
-  String positions = '';
+  String selectedSport = 'Futebol';
+  double? maxDistance;
+  String? positions;
   DateTime selectedDate = DateTime.now();
 
   @override
@@ -25,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             DropdownButtonFormField<String>(
               value: selectedSport,
-              items: ['futebol', 'volei', 'basquete', 'polo', 'outro']
+              items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro']
                   .map((sport) => DropdownMenuItem<String>(
                         value: sport,
                         child: Text(sport),
