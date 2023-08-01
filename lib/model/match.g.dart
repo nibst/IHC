@@ -18,7 +18,7 @@ class MatchAdapter extends TypeAdapter<Match> {
     };
     return Match(
       id: fields[0] as int?,
-      sport: fields[1] as String?,
+      sport: fields[1] as String,
       place: fields[2] as String?,
       datetime: fields[3] as DateTime,
       adminId: fields[7] as int,

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'package:myapp/controller/controllers.dart';
 import 'package:myapp/main.dart';
 import 'package:myapp/model/models.dart';
+
+import 'match_details.dart';
 
 class MatchResultsPage extends StatelessWidget {
   final String selectedSport;
@@ -16,55 +20,50 @@ class MatchResultsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Match> matches = _getMatches();
     return Scaffold(
-      appBar: AppBar(title: Text('Resultados da Busca')),
-      body: FutureBuilder(
-        future: _getMatches(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erro ao buscar as partidas.'));
+        appBar: AppBar(title: Text('Resultados da Busca')),
+        body: Builder(builder: (context) {
+          if (matches.isEmpty) {
+            return Center(child: Text('Nenhuma partida encontrada.'));
           } else {
-            List<Map<String, dynamic>> matches =
-                snapshot.data as List<Map<String, dynamic>>;
-            if (matches.isEmpty) {
-              return Center(child: Text('Nenhuma partida encontrada.'));
-            } else {
-              return ListView.builder(
-                itemCount: matches.length,
-                itemBuilder: (context, index) {
-                  final match = matches[index];
-                  return ListTile(
-                    title: Text(match['title']),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(match['firstSubtitle']),
-                        Text(match['thirdSubtitle']),
-                        Text(match['fourthSubtitle']),
-                      ],
-                    ),
-                  );
-                },
-              );
-            }
+            return ListView.builder(
+              itemCount: matches.length,
+              itemBuilder: (context, index) {
+                final match = matches[index];
+                return Card(
+                  child: ListTile(
+                    title: Text(match.sport),
+                    subtitle: Text(
+                        '${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchDetailsPage(
+                            match: match,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            );
           }
-        },
-      ),
-    );
+        }));
   }
 
-  Future<List<Match>> _getMatches() async {
+  List<Match> _getMatches() {
     final matches = matchDAO.getAllMatches();
     List<Match> resultedMatches = [];
     for (var i = 0; i < matches.length; i++) {
       if (matches[i].sport == selectedSport &&
           (0 <= (maxDistance ?? 0)) &&
-          (matches[i].availablePositions?.contains(positions!) ?? true)) {
+          (matches[i].availablePositions?.contains(positions ?? '') ?? true)) {
         resultedMatches.add(matches[i]);
       }
     }
-    return matches;
+    return resultedMatches;
   }
 }

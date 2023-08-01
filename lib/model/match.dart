@@ -18,7 +18,7 @@ class Match {
   int? id;
 
   @HiveField(1)
-  String? sport;
+  String sport;
 
   @HiveField(2)
   String? place;
