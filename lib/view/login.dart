@@ -121,61 +121,64 @@ class _SignupPageState extends State<SignupPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
+          child: ListView(children: [
+            Center(
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(labelText: 'Name'),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(labelText: 'Email'),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
+                      decoration: InputDecoration(labelText: 'Data'),
+                      validator: (value) {
+                        if (_birthdate == null) {
+                          return 'Por favor selecione uma data';
+                        }
+                        return null;
+                      },
+                      controller: TextEditingController(
+                        text: DateFormat('dd-MM-yyyy').format(_birthdate),
+                      )),
+                  SizedBox(height: 20),
+                  DropdownButtonFormField(
+                    value: _favoriteSport ??
+                        'Futebol', // Valor padrão: 'Futebol' se _favoriteSport for nulo
+                    items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro']
+                        .map((sport) =>
+                            DropdownMenuItem(value: sport, child: Text(sport)))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _favoriteSport =
+                            value; // Necessário converter value para String?
+                      });
+                    },
+                    decoration: InputDecoration(labelText: 'Favorite Sport'),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _handleSignup,
+                    child: Text('Inscrever'),
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                  decoration: InputDecoration(labelText: 'Data'),
-                  validator: (value) {
-                    if (_birthdate == null) {
-                      return 'Por favor selecione uma data';
-                    }
-                    return null;
-                  },
-                  controller: TextEditingController(
-                    text: DateFormat('dd-MM-yyyy').format(_birthdate),
-                  )),
-              SizedBox(height: 20),
-              DropdownButtonFormField(
-                value: _favoriteSport ??
-                    'Futebol', // Valor padrão: 'Futebol' se _favoriteSport for nulo
-                items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro']
-                    .map((sport) =>
-                        DropdownMenuItem(value: sport, child: Text(sport)))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _favoriteSport =
-                        value; // Necessário converter value para String?
-                  });
-                },
-                decoration: InputDecoration(labelText: 'Favorite Sport'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _handleSignup,
-                child: Text('Inscrever'),
-              ),
-            ],
-          ),
+            ),
+          ]),
         ),
       ),
     );
