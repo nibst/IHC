@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/view/findMatchs.dart';
 
 import 'manage.dart';
 
@@ -32,6 +33,10 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // TODO: Add functionality for the second button
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchPage()),
+                );
                 ;
               },
               child: Text(
