@@ -5,15 +5,18 @@ part 'match.g.dart';
 
 @HiveType(typeId: 1)
 class Match {
-  Match(
-      {required this.id,
-      required this.sport,
-      required this.place,
-      required this.datetime,
-      required this.adminId,
-      this.availablePositions,
-      this.registrations = const [],
-      this.registrationRequests = const []});
+  Match({
+    required this.id,
+    required this.sport,
+    required this.place,
+    required this.datetime,
+    required this.adminId,
+    this.availablePositions,
+    List<PlayerRegistration>? registrations, // Remove const here
+    List<PlayerRegistration>? registrationRequests, // Remove const here
+  })  : registrations = registrations ?? [],
+        registrationRequests = registrationRequests ?? [];
+
   @HiveField(0)
   int? id;
 

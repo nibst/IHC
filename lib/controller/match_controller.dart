@@ -15,7 +15,6 @@ class MatchController {
     if (!registrationsContainsUserId(match, request.getPlayerId())) {
       if (!registrationRequestsContains(match, request)) {
         match.addRegistrationRequest(request);
-
         List<Match> matches = matchDAO.getAllMatches();
         final index = matches.indexWhere((element) => element.id == match.id);
         matchDAO.updateMatch(match, index);

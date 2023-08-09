@@ -23,8 +23,8 @@ class MatchAdapter extends TypeAdapter<Match> {
       datetime: fields[3] as DateTime,
       adminId: fields[7] as int,
       availablePositions: fields[4] as String?,
-      registrations: (fields[5] as List).cast<PlayerRegistration>(),
-      registrationRequests: (fields[6] as List).cast<PlayerRegistration>(),
+      registrations: (fields[5] as List?)?.cast<PlayerRegistration>(),
+      registrationRequests: (fields[6] as List?)?.cast<PlayerRegistration>(),
     );
   }
 

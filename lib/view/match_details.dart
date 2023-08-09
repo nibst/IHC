@@ -104,7 +104,8 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                           subtitle: Text(position),
                           trailing: InkWell(
                             child: const Icon(
-                              Icons.add,
+                              Icons.add_circle,
+                              color: Colors.green,
                             ),
                             onTap: () {
                               setState(() {
