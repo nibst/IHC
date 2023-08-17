@@ -6,8 +6,7 @@ class UserDAOHiveImpl implements UserDAO {
   late final Box<User> userBox;
   bool _isHiveInit = false;
 
-  static final UserDAOHiveImpl _instance =
-      UserDAOHiveImpl._privateConstructor();
+  static final UserDAOHiveImpl _instance = UserDAOHiveImpl._privateConstructor();
 
   /// Empty private constructor, as we are initialising the async init() in a
   /// separate call.
@@ -26,7 +25,7 @@ class UserDAOHiveImpl implements UserDAO {
       //dont know
       await Hive.initFlutter('hiveDb');
       //essentially a table
-      userBox = await Hive.openBox('users_box');
+      userBox = await Hive.openBox('usersbox');
       _isHiveInit = true;
     }
   }

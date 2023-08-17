@@ -11,8 +11,7 @@ abstract class MatchDAO {
 
   Match? deleteMatch(Match match);
 
-  void updateMatch(
-      Match updatedMatch, int index); //returns index that is stored on db
+  void updateMatch(Match updatedMatch, int index); //returns index that is stored on db
   Future<void> clear();
 
   /// TODO: implement other MatchDAO interface overrides...

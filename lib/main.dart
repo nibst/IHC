@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:myapp/controller/controllers.dart';
 import 'package:myapp/view/home.dart';
 import 'package:myapp/view/manage.dart';
@@ -26,28 +27,17 @@ import 'package:myapp/model/factories/factories.dart';
 import 'package:myapp/view/match_details.dart';
 import 'package:myapp/view/login.dart';
 
-User currentUser = User(
-    id: 0,
-    name: 'testnikolas',
-    email: 'nikolasps7@gmail.com',
-    password: '123',
-    birthdate: DateTime(2001, 10, 29),
-    favoriteSport: 'Futebol');
+User currentUser = User(id: 0, name: 'testnikolas', email: 'nikolasps7@gmail.com', password: '123', birthdate: DateTime(2001, 10, 29), favoriteSport: 'Futebol');
 late UserDAO userDAO;
 late MatchDAO matchDAO;
-Match testMatch = Match(
-    id: 0,
-    sport: 'Teste',
-    place: 'place',
-    datetime: DateTime.now(),
-    adminId: 0,
-    availablePositions: 'algo',
-    registrations: [],
-    registrationRequests: []);
+late RegistrationRequestDAO requestDAO;
 Future<void> main() async {
   userDAO = await UserDAOFactory.getDAO(DBType.hive);
   matchDAO = await MatchDAOFactory.getDAO(DBType.hive);
-
+  requestDAO = await RegistrationRequestDAOFactory.getDAO(DBType.hive);
+  userDAO.clear();
+  matchDAO.clear();
+  requestDAO.clear();
   runApp(MyApp());
 }
 

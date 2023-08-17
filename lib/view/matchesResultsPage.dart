@@ -33,15 +33,13 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
 
   @override
   Widget build(BuildContext context) {
+    RegistrationRequestController registrationController = RegistrationRequestController(requestDAO: requestDAO);
     List<Match> matches = _getMatches();
-    List<Match> matchesThatCurrentUserHasRequestedToJoin = matches
-        .where((match) => match.registrationRequests
-            .any((request) => request.getPlayerId() == currentUser.id))
-        .toList();
+    List<Match> matchesThatCurrentUserHasRequestedToJoin =
+        matches.where((match) => registrationController.getPendingRegistrationRequestsOfMatchId(match.id).any((request) => request.getUserId() == currentUser.id)).toList();
     // Update addButtonStates based on matchesThatCurrentUserHasRequestedToJoin
     addButtonStates = matches.map((match) {
-      return matchesThatCurrentUserHasRequestedToJoin
-          .any((requestedMatch) => requestedMatch.id == match.id);
+      return matchesThatCurrentUserHasRequestedToJoin.any((requestedMatch) => requestedMatch.id == match.id);
     }).toList();
     return Scaffold(
         appBar: AppBar(title: Text('Resultados da Busca')),
@@ -56,8 +54,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
                 return Card(
                   child: ListTile(
                     title: Text(match.sport),
-                    subtitle: Text(
-                        '${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
+                    subtitle: Text('${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
                     trailing: InkWell(
                       child: addButtonStates[index]
                           ? const Icon(
@@ -73,12 +70,11 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
                           if (!addButtonStates[index]) {
                             addRequest(context, matches[index], index);
                           } else {
-                            MatchController matchController =
-                                MatchController(matchDAO: matchDAO);
-                            matchController.removeRegistrationRequest(
-                                matches[index],
-                                PlayerRegistration(
-                                    playerId: currentUser.id, position: ''));
+                            registrationController.deleteRegistrationRequest(RegistrationRequest(
+                              userId: currentUser.id,
+                              matchId: matches[index].id,
+                              position: '',
+                            ));
                           }
                         });
                       },
@@ -105,10 +101,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
     final matches = matchDAO.getAllMatches();
     List<Match> resultedMatches = [];
     for (var i = 0; i < matches.length; i++) {
-      if (matches[i].sport == widget.selectedSport &&
-          (0 <= (widget.maxDistance ?? 0)) &&
-          (matches[i].availablePositions?.contains(widget.positions ?? '') ??
-              true)) {
+      if (matches[i].sport == widget.selectedSport && (0 <= (widget.maxDistance ?? 0)) && (matches[i].availablePositions?.contains(widget.positions ?? '') ?? true)) {
         resultedMatches.add(matches[i]);
       }
     }
@@ -116,7 +109,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
   }
 
   addRequest(BuildContext context, Match match, int index) {
-    MatchController matchController = MatchController(matchDAO: matchDAO);
+    RegistrationRequestController registrationController = RegistrationRequestController(requestDAO: requestDAO);
     showDialog(
         context: context,
         builder: (context) {
@@ -127,8 +120,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
               children: [
                 TextFormField(
                   controller: _position,
-                  decoration:
-                      const InputDecoration(hintText: 'Posição Desejada'),
+                  decoration: const InputDecoration(hintText: 'Posição Desejada'),
                 ),
                 const SizedBox(
                   height: 15,
@@ -136,12 +128,11 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        matchController.addRegistrationRequest(
-                            match,
-                            PlayerRegistration(
-                                playerId: currentUser.id,
-                                position: _position.text));
-
+                        registrationController.addRegistrationRequest(RegistrationRequest(
+                          userId: currentUser.id,
+                          matchId: match.id,
+                          position: _position.text,
+                        ));
                         addButtonStates[index] = !addButtonStates[index];
                         Navigator.pop(context);
                       });

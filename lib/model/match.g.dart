@@ -17,21 +17,19 @@ class MatchAdapter extends TypeAdapter<Match> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Match(
-      id: fields[0] as int?,
+      id: fields[0] as int,
       sport: fields[1] as String,
-      place: fields[2] as String?,
+      place: fields[2] as String,
       datetime: fields[3] as DateTime,
-      adminId: fields[7] as int,
+      adminId: fields[5] as int,
       availablePositions: fields[4] as String?,
-      registrations: (fields[5] as List?)?.cast<PlayerRegistration>(),
-      registrationRequests: (fields[6] as List?)?.cast<PlayerRegistration>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Match obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -43,10 +41,6 @@ class MatchAdapter extends TypeAdapter<Match> {
       ..writeByte(4)
       ..write(obj.availablePositions)
       ..writeByte(5)
-      ..write(obj.registrations)
-      ..writeByte(6)
-      ..write(obj.registrationRequests)
-      ..writeByte(7)
       ..write(obj.adminId);
   }
 

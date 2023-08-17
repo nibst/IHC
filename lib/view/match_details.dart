@@ -20,22 +20,24 @@ class MatchDetailsPage extends StatefulWidget {
 class _MatchDetailsPageState extends State<MatchDetailsPage> {
   late UserController userController;
   late MatchController matchController;
+  late RegistrationRequestController registrationController;
   late Match match;
   @override
   void initState() {
     super.initState();
     userController = UserController(userDAO: userDAO);
     matchController = MatchController(matchDAO: matchDAO);
+    registrationController = RegistrationRequestController(requestDAO: requestDAO);
     match = widget.match;
   }
 
   @override
   Widget build(BuildContext context) {
     bool isCurrentUserAdmin = match.adminId == currentUser.id;
-    List<PlayerRegistration> registrations;
-    List<PlayerRegistration> playerRegistrationRequests;
-    registrations = match.getregistrations();
-    playerRegistrationRequests = match.getRegistrationRequests();
+    List<RegistrationRequest> acceptedRegistrations;
+    List<RegistrationRequest> pendingRegistrationRequests;
+    acceptedRegistrations = registrationController.getAcceptedRegistrationRequestsOfMatchId(match.id);
+    pendingRegistrationRequests = registrationController.getPendingRegistrationRequestsOfMatchId(match.id);
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes da Partida'),
@@ -57,23 +59,22 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
             SizedBox(height: 8),
             Text('Local: ${match.place}'),
             SizedBox(height: 8),
-            Text(
-                'Data: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}'),
+            Text('Data: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}'),
             SizedBox(height: 8),
             Text('Posições Disponíveis: ${match.availablePositions} '),
             SizedBox(height: 20),
             Text(
-              'Jogadores (${registrations.length}):',
+              'Jogadores (${acceptedRegistrations.length}):',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: registrations.length,
+              itemCount: acceptedRegistrations.length,
               itemBuilder: (context, index) {
-                int id = registrations[index].getPlayerId();
+                int id = acceptedRegistrations[index].getUserId();
                 User? player = userController.getUserById(id);
-                String position = registrations[index].getPosition();
+                String position = acceptedRegistrations[index].getPosition();
                 return ListTile(
                   title: Text(player?.name ?? ""),
                   subtitle: Text(position),
@@ -87,18 +88,17 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Solicitações (${playerRegistrationRequests.length}):',
+                    'Solicitações (${pendingRegistrationRequests.length}):',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: playerRegistrationRequests.length,
+                    itemCount: pendingRegistrationRequests.length,
                     itemBuilder: (context, index) {
-                      int id = playerRegistrationRequests[index].getPlayerId();
+                      int id = pendingRegistrationRequests[index].getUserId();
                       User? player = userController.getUserById(id);
-                      String position =
-                          playerRegistrationRequests[index].getPosition();
+                      String position = pendingRegistrationRequests[index].getPosition();
                       return ListTile(
                           title: Text(player?.name ?? ""),
                           subtitle: Text(position),
@@ -109,13 +109,7 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                             ),
                             onTap: () {
                               setState(() {
-                                match = matchController.registerPlayer(
-                                    match, id, position);
-                                match =
-                                    matchController.removeRegistrationRequest(
-                                        match,
-                                        PlayerRegistration(
-                                            playerId: id, position: position));
+                                registrationController.acceptRegistrationRequest(RegistrationRequest(userId: id, matchId: match.id, position: position));
                               });
                             },
                           ));

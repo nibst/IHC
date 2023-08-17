@@ -20,29 +20,28 @@ class ManagePage extends StatefulWidget {
 class _ManagePageState extends State<ManagePage> {
   List<Match> matches = [];
   late MatchController matchController;
+  late RegistrationRequestController registrationController;
+
   _ManagePageState();
   @override
   void initState() {
     super.initState();
     matchController = MatchController(matchDAO: matchDAO);
+    registrationController = RegistrationRequestController(requestDAO: requestDAO);
   }
 
   // List to store all the created matches
   @override
   Widget build(BuildContext context) {
-    matchController.registerPlayer(testMatch, currentUser.id, 'any pos');
     matches = matchController.getAllMatches();
-    List<Match> matchesCreatedByCurrentUser =
-        matches.where((match) => match.adminId == currentUser.id).toList();
-
+    List<Match> matchesCreatedByCurrentUser = matches.where((match) => match.adminId == currentUser.id).toList();
     List<Match> matchesThatCurrentUserIsRegistered = matches
-        .where((match) => match.registrations.any(
-            (registration) => registration.getPlayerId() == currentUser.id))
+        .where((match) =>
+            registrationController.getAcceptedRegistrationRequestsOfMatchId(match.id).any((registration) => registration.getUserId() == currentUser.id))
         .toList();
 
     // Filter out duplicate matches from matchesThatCurrentUserIsRegistered.
-    matchesThatCurrentUserIsRegistered
-        .removeWhere((match) => matchesCreatedByCurrentUser.contains(match));
+    matchesThatCurrentUserIsRegistered.removeWhere((match) => matchesCreatedByCurrentUser.contains(match));
 
     return Scaffold(
       appBar: AppBar(
@@ -51,8 +50,7 @@ class _ManagePageState extends State<ManagePage> {
       body: Column(
         children: [
           Builder(builder: (context) {
-            if (matchesCreatedByCurrentUser.isEmpty &&
-                matchesThatCurrentUserIsRegistered.isEmpty) {
+            if (matchesCreatedByCurrentUser.isEmpty && matchesThatCurrentUserIsRegistered.isEmpty) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Center(child: Text("Sem Partidas")),
@@ -60,15 +58,13 @@ class _ManagePageState extends State<ManagePage> {
             } else {
               return Expanded(
                 child: ListView.builder(
-                  itemCount: matchesCreatedByCurrentUser.length +
-                      matchesThatCurrentUserIsRegistered.length,
+                  itemCount: matchesCreatedByCurrentUser.length + matchesThatCurrentUserIsRegistered.length,
                   itemBuilder: (context, index) {
                     if (index < matchesCreatedByCurrentUser.length) {
                       // Display matches created by the current user
                       return Card(
                         child: ListTile(
-                          title: Text(
-                              '${matchesCreatedByCurrentUser[index].sport}'),
+                          title: Text('${matchesCreatedByCurrentUser[index].sport}'),
                           subtitle: Text(
                               '${matchesCreatedByCurrentUser[index].place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(matchesCreatedByCurrentUser[index].datetime)}\nPosições: ${matchesCreatedByCurrentUser[index].availablePositions}'),
                           trailing: InkWell(
@@ -78,8 +74,7 @@ class _ManagePageState extends State<ManagePage> {
                             ),
                             onTap: () {
                               setState(() {
-                                matchController.deleteMatch(
-                                    matchesCreatedByCurrentUser[index]);
+                                matchController.deleteMatch(matchesCreatedByCurrentUser[index]);
                               });
                             },
                           ),
@@ -97,15 +92,13 @@ class _ManagePageState extends State<ManagePage> {
                       );
                     } else {
                       // Display matches that the current user is registered at
-                      int registeredIndex =
-                          index - matchesCreatedByCurrentUser.length;
-                      Match match =
-                          matchesThatCurrentUserIsRegistered[registeredIndex];
+                      int registeredIndex = index - matchesCreatedByCurrentUser.length;
+                      Match match = matchesThatCurrentUserIsRegistered[registeredIndex];
                       return Card(
                         child: ListTile(
                           title: Text('${match.sport}'),
-                          subtitle: Text(
-                              '${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
+                          subtitle:
+                              Text('${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
                           onTap: () {
                             Navigator.push(
                               context,

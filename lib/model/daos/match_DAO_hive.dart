@@ -6,8 +6,7 @@ class MatchDAOHiveImpl implements MatchDAO {
   late final Box<Match> matchBox;
   bool _isHiveInit = false;
 
-  static final MatchDAOHiveImpl _instance =
-      MatchDAOHiveImpl._privateConstructor();
+  static final MatchDAOHiveImpl _instance = MatchDAOHiveImpl._privateConstructor();
 
   /// Empty private constructor, as we are initialising the async init() in a
   /// separate call.
@@ -23,12 +22,10 @@ class MatchDAOHiveImpl implements MatchDAO {
     if (!_isHiveInit) {
       //Adapt types into the database and out of the database
       Hive.registerAdapter<Match>(MatchAdapter());
-      Hive.registerAdapter<PlayerRegistration>(PlayerRegistrationAdapter());
-
       //dont know
       await Hive.initFlutter('hiveDb');
       //essentially a table
-      matchBox = await Hive.openBox('matchbox');
+      matchBox = await Hive.openBox('matchesbox');
       _isHiveInit = true;
     }
   }
