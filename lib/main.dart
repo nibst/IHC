@@ -35,9 +35,6 @@ Future<void> main() async {
   userDAO = await UserDAOFactory.getDAO(DBType.hive);
   matchDAO = await MatchDAOFactory.getDAO(DBType.hive);
   requestDAO = await RegistrationRequestDAOFactory.getDAO(DBType.hive);
-  userDAO.clear();
-  matchDAO.clear();
-  requestDAO.clear();
   runApp(MyApp());
 }
 
