@@ -156,16 +156,11 @@ class _SignupPageState extends State<SignupPage> {
                       )),
                   SizedBox(height: 20),
                   DropdownButtonFormField(
-                    value: _favoriteSport ??
-                        'Futebol', // Valor padrão: 'Futebol' se _favoriteSport for nulo
-                    items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro']
-                        .map((sport) =>
-                            DropdownMenuItem(value: sport, child: Text(sport)))
-                        .toList(),
+                    value: _favoriteSport ?? 'Futebol', // Valor padrão: 'Futebol' se _favoriteSport for nulo
+                    items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro'].map((sport) => DropdownMenuItem(value: sport, child: Text(sport))).toList(),
                     onChanged: (value) {
                       setState(() {
-                        _favoriteSport =
-                            value; // Necessário converter value para String?
+                        _favoriteSport = value; // Necessário converter value para String?
                       });
                     },
                     decoration: InputDecoration(labelText: 'Favorite Sport'),
@@ -190,13 +185,7 @@ class _SignupPageState extends State<SignupPage> {
     String password = _passwordController.text;
     DateTime birthdate = _birthdate;
     UserController userController = UserController(userDAO: userDAO);
-    userController.addUser(User(
-        id: DateTime.now().millisecondsSinceEpoch,
-        name: name,
-        email: email,
-        password: password,
-        birthdate: birthdate,
-        favoriteSport: _favoriteSport ?? 'Futebol'));
+    userController.addUser(User(id: DateTime.now().millisecondsSinceEpoch, name: name, email: email, password: password, birthdate: birthdate, favoriteSport: _favoriteSport ?? 'Futebol'));
 
     Navigator.pop(context);
   }
