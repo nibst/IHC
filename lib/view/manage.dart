@@ -11,6 +11,7 @@ import 'package:myapp/model/models.dart';
 import 'package:myapp/model/factories/factories.dart';
 import 'package:myapp/view/match_details.dart';
 import 'package:myapp/main.dart';
+import 'side_menu.dart';
 
 class ManagePage extends StatefulWidget {
   @override
@@ -35,10 +36,8 @@ class _ManagePageState extends State<ManagePage> {
   Widget build(BuildContext context) {
     matches = matchController.getAllMatches();
     List<Match> matchesCreatedByCurrentUser = matches.where((match) => match.adminId == currentUser.id).toList();
-    List<Match> matchesThatCurrentUserIsRegistered = matches
-        .where((match) =>
-            registrationController.getAcceptedRegistrationRequestsOfMatchId(match.id).any((registration) => registration.getUserId() == currentUser.id))
-        .toList();
+    List<Match> matchesThatCurrentUserIsRegistered =
+        matches.where((match) => registrationController.getAcceptedRegistrationRequestsOfMatchId(match.id).any((registration) => registration.getUserId() == currentUser.id)).toList();
 
     // Filter out duplicate matches from matchesThatCurrentUserIsRegistered.
     matchesThatCurrentUserIsRegistered.removeWhere((match) => matchesCreatedByCurrentUser.contains(match));
@@ -47,6 +46,7 @@ class _ManagePageState extends State<ManagePage> {
       appBar: AppBar(
         title: Text('Gerenciar'),
       ),
+      endDrawer: SideMenuPage(),
       body: Column(
         children: [
           Builder(builder: (context) {
@@ -97,8 +97,7 @@ class _ManagePageState extends State<ManagePage> {
                       return Card(
                         child: ListTile(
                           title: Text('${match.sport}'),
-                          subtitle:
-                              Text('${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
+                          subtitle: Text('${match.place}\nData: ${DateFormat('dd-MM-yyyy HH:mm').format(match.datetime)}\nPosições: ${match.availablePositions}'),
                           onTap: () {
                             Navigator.push(
                               context,

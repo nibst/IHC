@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:myapp/controller/controllers.dart';
 import 'package:myapp/main.dart';
 import 'package:myapp/model/models.dart';
-
+import 'side_menu.dart';
 import 'match_details.dart';
 
 class MatchResultsPage extends StatefulWidget {
@@ -43,6 +43,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
     }).toList();
     return Scaffold(
         appBar: AppBar(title: Text('Resultados da Busca')),
+        endDrawer: SideMenuPage(),
         body: Builder(builder: (context) {
           if (matches.isEmpty) {
             return Center(child: Text('Nenhuma partida encontrada.'));

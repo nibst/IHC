@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/view/matchesResultsPage.dart';
+import 'package:myapp/view/matches_results_page.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/view/side_menu.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Procurar Partida')),
+      endDrawer: SideMenuPage(),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(

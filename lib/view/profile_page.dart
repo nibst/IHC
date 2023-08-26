@@ -17,13 +17,13 @@ class UserProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Name: ${user.name}', style: TextStyle(fontSize: 20)),
+            Text('Nome: ${user.name}', style: TextStyle(fontSize: 20)),
             SizedBox(height: 10),
             Text('Email: ${user.email}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
-            Text('Birthdate: ${user.birthdate.toString()}', style: TextStyle(fontSize: 18)),
+            Text('Data de Nascimento: ${user.birthdate.toString()}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
-            Text('Favorite Sport: ${user.favoriteSport}', style: TextStyle(fontSize: 18)),
+            Text('Esporte Favorito: ${user.favoriteSport}', style: TextStyle(fontSize: 18)),
           ],
         ),
       ),

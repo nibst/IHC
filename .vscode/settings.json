@@ -1,5 +1,6 @@
 {
     "cmake.configureOnOpen": true,
     "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 160
+    "editor.wordWrapColumn": 160,
+    "cmake.sourceDirectory": "/home/nikolas/Documents/ufrgs/flutter_projects/sportsApp/linux"
 }
