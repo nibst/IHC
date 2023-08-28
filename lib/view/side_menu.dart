@@ -59,7 +59,6 @@ class SideMenuPage extends StatelessWidget {
               // Handle settings menu option
             },
           )*/
-
           // Add more ListTile widgets for other menu options
         ],
       ),

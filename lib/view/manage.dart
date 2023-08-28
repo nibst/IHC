@@ -74,6 +74,10 @@ class _ManagePageState extends State<ManagePage> {
                             ),
                             onTap: () {
                               setState(() {
+                                List<RegistrationRequest> requests = registrationController.getRegistrationRequestsByMatchId(matchesCreatedByCurrentUser[index].id);
+                                for (int i = 0; i < requests.length; i++) {
+                                  registrationController.deleteRegistrationRequest(requests[i]);
+                                }
                                 matchController.deleteMatch(matchesCreatedByCurrentUser[index]);
                               });
                             },
