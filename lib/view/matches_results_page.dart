@@ -138,7 +138,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
                         Navigator.pop(context);
                       });
                     },
-                    child: const Text("Add")),
+                    child: const Text("Candidatar")),
               ],
             ),
           );
