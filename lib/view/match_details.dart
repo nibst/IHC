@@ -78,7 +78,17 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                 return ListTile(
                   title: Text(player?.name ?? ""),
                   subtitle: Text(position),
-                  // Add other player details as needed
+                  trailing: InkWell(
+                    child: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        registrationController.setAsPendingRegistrationRequest(RegistrationRequest(userId: id, matchId: match.id, position: position));
+                      });
+                    },
+                  ),
                 );
               },
             ),
@@ -100,19 +110,37 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
                       User? player = userController.getUserById(id);
                       String position = pendingRegistrationRequests[index].getPosition();
                       return ListTile(
-                          title: Text(player?.name ?? ""),
-                          subtitle: Text(position),
-                          trailing: InkWell(
-                            child: const Icon(
-                              Icons.add_circle,
-                              color: Colors.green,
+                        title: Text(player?.name ?? ""),
+                        subtitle: Text(position),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            InkWell(
+                              child: const Icon(
+                                Icons.add_circle,
+                                color: Colors.green,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  registrationController.acceptRegistrationRequest(RegistrationRequest(userId: id, matchId: match.id, position: position));
+                                });
+                              },
                             ),
-                            onTap: () {
-                              setState(() {
-                                registrationController.acceptRegistrationRequest(RegistrationRequest(userId: id, matchId: match.id, position: position));
-                              });
-                            },
-                          ));
+                            SizedBox(width: 16), // Add spacing between the buttons
+                            InkWell(
+                              child: const Icon(
+                                Icons.remove_circle,
+                                color: Colors.red,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  registrationController.rejectRegistrationRequest(RegistrationRequest(userId: id, matchId: match.id, position: position));
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 ],

@@ -33,6 +33,14 @@ class RegistrationRequestController {
     return request;
   }
 
+  RegistrationRequest setAsPendingRegistrationRequest(RegistrationRequest request) {
+    request.setStatus("pending");
+    List<RegistrationRequest> requests = requestDAO.getAllRequests();
+    final index = requests.indexWhere((element) => isSameRegistrationRequest(element, request));
+    requestDAO.updateRequest(request, index);
+    return request;
+  }
+
   bool isSameRegistrationRequest(RegistrationRequest request1, RegistrationRequest request2) {
     return (request1.getMatchId() == request2.getMatchId() && request1.getUserId() == request2.getUserId());
   }
