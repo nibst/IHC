@@ -10,7 +10,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String selectedSport = 'Futebol';
-  double? maxDistance;
   String? positions;
   DateTime selectedDate = DateTime.now();
 
@@ -27,7 +26,7 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             DropdownButtonFormField<String>(
               value: selectedSport,
-              items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Outro']
+              items: ['Futebol', 'Volei', 'Basquete', 'Polo', 'Qualquer']
                   .map((sport) => DropdownMenuItem<String>(
                         value: sport,
                         child: Text(sport),
@@ -41,16 +40,9 @@ class _SearchPageState extends State<SearchPage> {
             ),
             SizedBox(height: 16),
             TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Distância Máxima (km)'),
-              onChanged: (value) {
-                maxDistance = double.tryParse(value) ?? 0;
-              },
-            ),
-            TextFormField(
                 readOnly: true,
                 onTap: () => _selectDate(context),
-                decoration: InputDecoration(labelText: 'Data'),
+                decoration: InputDecoration(labelText: 'A partir da Data'),
                 validator: (value) {
                   if (selectedDate == null) {
                     return 'Por favor selecione uma data';
@@ -62,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
                 )),
             SizedBox(height: 16),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Posições'),
+              decoration: InputDecoration(labelText: 'Posição'),
               onChanged: (value) {
                 positions = value;
               },
@@ -76,8 +68,8 @@ class _SearchPageState extends State<SearchPage> {
                   MaterialPageRoute(
                     builder: (context) => MatchResultsPage(
                       selectedSport: selectedSport,
-                      maxDistance: maxDistance,
                       positions: positions,
+                      selectedDate: selectedDate,
                     ),
                   ),
                 );
@@ -95,7 +87,7 @@ class _SearchPageState extends State<SearchPage> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2101),
     );
 
     if (picked != null && picked != selectedDate) {

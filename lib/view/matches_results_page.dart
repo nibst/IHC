@@ -9,14 +9,9 @@ import 'match_details.dart';
 
 class MatchResultsPage extends StatefulWidget {
   final String selectedSport;
-  final double? maxDistance;
   final String? positions;
-
-  MatchResultsPage({
-    required this.selectedSport,
-    required this.maxDistance,
-    required this.positions,
-  });
+  final DateTime? selectedDate;
+  MatchResultsPage({required this.selectedSport, required this.positions, required this.selectedDate});
 
   @override
   State<MatchResultsPage> createState() => _MatchResultsPageState();
@@ -102,11 +97,21 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
     final matches = matchDAO.getAllMatches();
     List<Match> resultedMatches = [];
     for (var i = 0; i < matches.length; i++) {
-      if (matches[i].sport == widget.selectedSport && (0 <= (widget.maxDistance ?? 0)) && (matches[i].availablePositions?.contains(widget.positions ?? '') ?? true)) {
+      if (isMatchedBySearch(matches[i])) {
         resultedMatches.add(matches[i]);
       }
     }
     return resultedMatches;
+  }
+
+  bool isMatchedBySearch(Match match) {
+    bool isSameSport = false;
+    if (widget.selectedSport == "Qualquer") {
+      isSameSport = true;
+    } else if (widget.selectedSport == match.sport) {
+      isSameSport = false;
+    }
+    return isSameSport && (match.availablePositions?.toLowerCase().contains(widget.positions?.toLowerCase() ?? '') ?? true) && (isThisDateAfterComparedDate(widget.selectedDate ?? DateTime.now(), match.datetime));
   }
 
   addRequest(BuildContext context, Match match, int index) {
@@ -145,5 +150,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
         });
   }
 
-  removeSolicitaion(match) {}
+  bool isThisDateAfterComparedDate(DateTime selectedDate, DateTime comparedDate) {
+    return selectedDate.compareTo(comparedDate) <= 0;
+  }
 }
