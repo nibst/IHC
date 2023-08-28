@@ -17,7 +17,7 @@ class SideMenuPage extends StatelessWidget {
               color: theme.primaryColor,
             ),
             child: Text(
-              'Menu Options',
+              'Menu',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -26,7 +26,7 @@ class SideMenuPage extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.home),
-            title: Text('Menu'),
+            title: Text('Página Inicial'),
             onTap: () {
               Navigator.push(
                 context,
