@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
                       style: TextStyle(fontSize: 24),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
                     ),
                   ),
                 ),
@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
                       style: TextStyle(fontSize: 24),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
                     ),
                   ),
                 ),
@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
                       style: TextStyle(fontSize: 24),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
                     ),
                   ),
                 ),

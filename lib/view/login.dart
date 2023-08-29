@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login Page')),
+      appBar: AppBar(title: Text('Login')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(labelText: 'Senha'),
                 obscureText: true,
               ),
               SizedBox(height: 20),
@@ -117,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Signup Page')),
+      appBar: AppBar(title: Text('Cadastro')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -127,7 +127,7 @@ class _SignupPageState extends State<SignupPage> {
                 children: [
                   TextFormField(
                     controller: _nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: InputDecoration(labelText: 'Nome'),
                   ),
                   SizedBox(height: 20),
                   TextFormField(
@@ -137,14 +137,14 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Password'),
+                    decoration: InputDecoration(labelText: 'Senha'),
                     obscureText: true,
                   ),
                   SizedBox(height: 20),
                   TextFormField(
                       readOnly: true,
                       onTap: () => _selectDate(context),
-                      decoration: InputDecoration(labelText: 'Data'),
+                      decoration: InputDecoration(labelText: 'Data de Nascimento'),
                       validator: (value) {
                         if (_birthdate == null) {
                           return 'Por favor selecione uma data';
@@ -163,7 +163,7 @@ class _SignupPageState extends State<SignupPage> {
                         _favoriteSport = value; // Necessário converter value para String?
                       });
                     },
-                    decoration: InputDecoration(labelText: 'Favorite Sport'),
+                    decoration: InputDecoration(labelText: 'Esporte Favorito'),
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(

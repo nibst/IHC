@@ -109,7 +109,7 @@ class _MatchResultsPageState extends State<MatchResultsPage> {
     if (widget.selectedSport == "Qualquer") {
       isSameSport = true;
     } else if (widget.selectedSport == match.sport) {
-      isSameSport = false;
+      isSameSport = true;
     }
     return isSameSport && (match.availablePositions?.toLowerCase().contains(widget.positions?.toLowerCase() ?? '') ?? true) && (isThisDateAfterComparedDate(widget.selectedDate ?? DateTime.now(), match.datetime));
   }
